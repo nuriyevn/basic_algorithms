@@ -1,0 +1,81 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+void kmp_prefix(string s, vector<int>& p)
+{
+
+	int len = s.size();
+	int j = 0;
+	int i = 1;
+	while (i < len)
+	{
+		if (s[j] == s[i])
+		{
+			p[i] = j + 1;
+			i++;
+			j++;
+
+		}
+		else
+		{
+			if (j == 0)
+			{
+				p[i] = 0;
+				i++;
+			}
+			else
+			{
+				j = p[j - 1];
+			}
+		}
+	}
+
+}
+
+bool kmp_search(string S, string W)
+{
+	int n = S.size();
+	int m = W.size();
+	int i = 0, j = 0;
+
+	vector<int> p(W.size());
+
+	kmp_prefix(W, p);
+
+	while (i < n)
+	{
+		if (S[i] == W[j])
+		{
+			i++;
+			j++;
+			if (j == m)
+
+				return true;
+		}
+		else
+		{
+			if (j > 0)
+			{
+				j = p[j - 1];
+			}
+			else
+			{
+				i++;
+			}
+		}
+	}
+
+	if (i == n)
+		return false;
+}
+
+int main()
+{
+	string S = "helloworld";
+	string W = "elloworldh";
+
+	cout << kmp_search(S+S, W);
+}
