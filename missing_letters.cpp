@@ -24,6 +24,7 @@ class Sentence {
 private:
 	string text;
 	std::map<char, int> letter_frequency;
+
 public:
 
 	Sentence(string s)
@@ -47,9 +48,29 @@ public:
 	{
 		std::set<char> missingLetters;
 
-		for (auto c : text)
+		int text_size = text.size();
+		bool already_panagram = false;
+		for (int i = 0; i < text_size && !already_panagram; i++)
 		{
-			letter_frequency[c]++;
+			char c1 = 'a';
+
+			if (text[i] >= 'A' && text[i] <= 'Z' || text[i] >= 'a' && text[i] <= 'z')
+			{
+				letter_frequency[text[i]]++;
+			}
+			
+			if (text_size % 1024 == 0) // every 1024 characters we check for panagramity. Assuming that it's regular text.
+			{
+				int letterPresenceCounter = 0;
+				for (char c = 'A'; c <= 'Z'; c++)
+				{
+					if (letter_frequency[c] + letter_frequency[tolower(c)] > 0) // probably && is better thatn plus.
+						letterPresenceCounter++;
+				}
+
+				if (letterPresenceCounter == ('Z' - 'A' + 1))
+					already_panagram = true;
+			}
 		}
 
 		char c1 = 'a';
@@ -60,19 +81,37 @@ public:
 			c1++;
 		}
 
+
 		return missingLetters;
 	}
 };
 
+/*
+Waltz, nymph, for quick jigs vex Bud. - Dmitri Borgmann
+Sphinx of black quartz, judge my vow.
+Pack my box with five dozen liquor jugs. - Mark Dunn
+Glib jocks quiz nymph to vex dwarf.
+Jackdaws love my big sphinx of quartz.
+The five boxing wizards jump quickly.
+How vexingly quick daft zebras jump!
+Quick zephyrs blow, vexing daft Jim.
+Two driven jocks help fax my big quiz.
+The jay, pig, fox, zebra and my wolves quack!
+Sympathizing would fix Quaker objectives.
+A wizard's job is to vex chumps quickly in fog.
+Watch "Jeopardy!", Alex Trebek's fun TV quiz game.
+By Jove, my quick study of lexicography won a prize!
+Waxy and quivering, jocks fumble the pizza.
+*/
 int main()
 {
-	Sentence sentence(" quick brown fox jumps over the lazy dog");
+	Sentence sentence("A quick brown fox jumps over the lazy dog");
 	
 	std::set<char> missingLetters = sentence.getMissingLetters();
 
 	for (auto letter : missingLetters)
 	{
-		cout << letter << " ";
+		cout << letter;
 	}
 
 	cout << endl;
